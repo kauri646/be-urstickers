@@ -9,7 +9,7 @@ import (
 )
 
 func RunMigration() {
-	err := database.DB.AutoMigrate(&entity.User{})
+	err := database.DB.AutoMigrate(&entity.User{}, &entity.Film{}, &entity.Theater{})
 	if err != nil {
 		log.Println(err)
 	}
