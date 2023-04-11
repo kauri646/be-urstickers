@@ -32,4 +32,6 @@ func RouteInit(r *fiber.App){
 	r.Post("/film", handler.FilmHandlerCreate)
 	r.Put("/film/:id", handler.FilmHandlerUpdate)
 	r.Delete("/film/:id", handler.FilmHandlerDelete)
+
+	
 }

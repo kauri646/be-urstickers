@@ -60,7 +60,7 @@ func TheaterHandlerCreate(ctx *fiber.Ctx) error {
 		Kota: theater.Kota,
         Theater: theater.Theater,
         Phone: theater.Phone,
-		Film: theater.Film,
+		
 	}
 
 		
@@ -103,7 +103,7 @@ func TheaterHandlerUpdate(ctx *fiber.Ctx) error {
 	theater.Kota = theaterRequest.Kota
 	theater.Theater = theaterRequest.Theater
 	theater.Phone = theaterRequest.Phone
-	theater.Film = theaterRequest.Film
+
 	errUpdate := database.DB.Save(&theater).Error
 	if errUpdate!= nil {
         return ctx.Status(500).JSON(fiber.Map{

@@ -10,12 +10,12 @@ import (
 )
 
 func FilmHandlerGetAll(ctx *fiber.Ctx) error {
+	theaterid := ctx.Query("theaterid")
+    var film []entity.Film
+    err := database.DB.Find(&film).Joins("Inner Join lists t on t.film_id = films.id").Where("t.theater_id = ?", theaterid)
 
-	var film []entity.Film
-
-	result := database.DB.Find(&film)
-	if result.Error != nil {
-		log.Println(result.Error)
+	if err.Error != nil {
+		log.Println(err.Error)
 	}
 	return ctx.JSON(film)
 
@@ -66,7 +66,7 @@ func FilmHandlerCreate(ctx *fiber.Ctx) error {
 		Casts: film.Casts,
 		Sinopsis: film.Sinopsis,
 		Like: film.Like,
-		Comment: film.Comment,
+		
 	}
 		
 	errCreateFilm := database.DB.Create(&newFilm).Error
@@ -126,7 +126,7 @@ func FilmHandlerUpdate(ctx *fiber.Ctx) error {
 	film.Casts = filmRequest.Casts
 	film.Sinopsis = filmRequest.Sinopsis
 	film.Like = filmRequest.Like
-	film.Comment = filmRequest.Comment
+	
 	errUpdate := database.DB.Save(&film).Error
 	if errUpdate!= nil {
         return ctx.Status(500).JSON(fiber.Map{
@@ -165,3 +165,4 @@ func FilmHandlerDelete(ctx *fiber.Ctx) error {
 		"message": "film was deleted",
 	})
 }
+

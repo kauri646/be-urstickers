@@ -9,8 +9,8 @@ type FilmCreateRequest struct {
 	Produksi  string `json:"produksi" validate:"required"`
 	Casts     string `json:"casts" validate:"required"`
 	Sinopsis  string `json:"sinopsis" validate:"required"`
-	Like      uint   `json:"like" validate:"required"`
-	Comment   string `json:"comment" validate:"required"`
+	Like      uint   `json:"like"`
+	
 }
 
 type FilmUpdateRequest struct {
@@ -22,6 +22,8 @@ type FilmUpdateRequest struct {
 	Produksi  string `json:"produksi" validate:"required"`
 	Casts     string `json:"casts" validate:"required"`
 	Sinopsis  string `json:"sinopsis" validate:"required"`
-	Like      uint   `json:"like" validate:"required"`
-	Comment   string `json:"comment" validate:"required"`
+	Like      uint   `json:"like"`
+	
 }
+
+
