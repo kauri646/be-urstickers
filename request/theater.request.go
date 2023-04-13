@@ -15,3 +15,8 @@ type TheaterUpdateRequest struct {
 
 	
 }
+
+type ListRequest struct {
+	TheaterId uint `json:"theater_id"`
+	FilmId uint `json:"film_id"`
+}

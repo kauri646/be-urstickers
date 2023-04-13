@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,15 +11,32 @@ import (
 )
 
 func FilmHandlerGetAll(ctx *fiber.Ctx) error {
-	theaterid := ctx.Query("theaterid")
+	fmt.Println("ASDFGH")
     var film []entity.Film
-    err := database.DB.Find(&film).Joins("Inner Join lists t on t.film_id = films.id").Where("t.theater_id = ?", theaterid)
+    err := database.DB.Find(&film)
 
 	if err.Error != nil {
 		log.Println(err.Error)
 	}
 	return ctx.JSON(film)
 
+}
+
+func FilmHandlerGetByTheaterId(ctx *fiber.Ctx) error {
+	theaterid := ctx.QueryInt("theaterid")
+	fmt.Println(theaterid)
+	var film []entity.TheaterId
+	err := database.DB.Raw(`
+		SELECT f.id, f.judul, l.theater_id AS theater_id, f.jenis_film, f. produser, f.sutradara, f.penulis, f.produksi, f.casts, f.sinopsis, f.like
+		FROM films f
+		INNER JOIN lists l ON l.film_id = f.id
+		WHERE l.theater_id = ?
+	`, theaterid).Scan(&film)
+
+	if err.Error != nil{
+		log.Println(err.Error)
+	}
+	return ctx.JSON(film)
 }
 
 func FilmHandlerGetById(ctx *fiber.Ctx) error {

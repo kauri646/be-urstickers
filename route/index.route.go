@@ -23,12 +23,15 @@ func RouteInit(r *fiber.App){
 
 	r.Get("/theater", handler.TheaterHandlerGetAll)
 	r.Get("/theater/:kota", handler.TheaterHandlerGetById)
+	r.Get("/theaterdetails/details", handler.TheaterHandlerGetDetails)
+	r.Post("/theater/lists", handler.TheaterHandlerCreateList)
 	r.Post("/theater", handler.TheaterHandlerCreate)
-	r.Put("/theater/:kota", handler.TheaterHandlerUpdate)
+	r.Put("/theater/:kota", handler.TheaterHandlerUpdate) 
 	r.Delete("/theater/:kota", handler.TheaterHandlerDelete)
 
-	r.Get("/film", handler.FilmHandlerGetAll)
+	r.Get("/films", handler.FilmHandlerGetAll)
 	r.Get("/film/:id", handler.FilmHandlerGetById)
+	r.Get("/films/:theaterid", handler.FilmHandlerGetByTheaterId)
 	r.Post("/film", handler.FilmHandlerCreate)
 	r.Put("/film/:id", handler.FilmHandlerUpdate)
 	r.Delete("/film/:id", handler.FilmHandlerDelete)
