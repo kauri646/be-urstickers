@@ -7,3 +7,4 @@ type List struct{
 	FilmId uint `json:"film_id"`
 	Film Film `gorm:"foreignKey:FilmId"`
 }
+
