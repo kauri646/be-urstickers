@@ -4,6 +4,7 @@ package entity
 
 type Film struct {
 	ID        uint   `json:"id" gorm:"primaryKey"`
+	Thumbnail string `json:"thumbnail"`
 	Judul      string `json:"judul" gorm:"foreignKey"`
 	JenisFilm     string `json:"jenis_film"`
 	Produser  string `json:"produser"`
@@ -22,6 +23,7 @@ type Film struct {
 
 type TheaterId struct {
 	ID        uint   `json:"id" gorm:"primaryKey"`
+	Thumbnail string `json:"thumbnail"`
 	TheaterId uint `json:"theater_id"`
 	Judul      string `json:"judul" gorm:"foreignKey"`
 	JenisFilm     string `json:"jenis_film"`

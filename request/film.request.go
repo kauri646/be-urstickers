@@ -2,6 +2,7 @@ package request
 
 type FilmCreateRequest struct {
 	Judul     string `json:"judul" validate:"required"`
+	Thumbnail string `json:"thumbnail" validate:"required"`
 	JenisFilm string `json:"jenisfilm" validate:"required"`
 	Produser  string `json:"produser" validate:"required"`
 	Sutradara string `json:"sutradara" validate:"required"`
@@ -15,6 +16,7 @@ type FilmCreateRequest struct {
 
 type FilmUpdateRequest struct {
 	Judul     string `json:"judul" validate:"required"`
+	Thumbnail string `json:"thumbnail" validate:"required"`
 	JenisFilm string `json:"jenisfilm" validate:"required"`
 	Produser  string `json:"produser" validate:"required"`
 	Sutradara string `json:"sutradara" validate:"required"`

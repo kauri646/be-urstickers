@@ -8,17 +8,32 @@ import (
 	"github.com/kauri646/go-restapi-fiber/database"
 	"github.com/kauri646/go-restapi-fiber/model/entity"
 	"github.com/kauri646/go-restapi-fiber/request"
+	"github.com/kauri646/go-restapi-fiber/utils"
 )
 
 func FilmHandlerGetAll(ctx *fiber.Ctx) error {
 	fmt.Println("ASDFGH")
-    var film []entity.Film
-    err := database.DB.Find(&film)
-
-	if err.Error != nil {
-		log.Println(err.Error)
-	}
-	return ctx.JSON(film)
+	var film []entity.Film
+	sql := "SELECT * FROM films"
+    paging := utils.PaginationResponse{}
+	// if sort := ctx.Query("sort"); sort != "" {
+	// 	sql = fmt.Sprintf("%s ORDER BY judul %s", sql, sort)
+	// }
+    	
+	
+	// page,_ := strconv.Atoi(ctx.Query("page", "1"))
+	// 	perPage := 9
+	// 	var total int64 
+		
+	// 	database.DB.Raw(sql).Count(&total)
+	
+	// 	sql = fmt.Sprintf("%s LIMIT %d OFFSET %d", sql, perPage, (page - 1) * perPage)
+	database.DB.Raw(sql).Scan(&film)
+	
+	return ctx.JSON(fiber.Map{
+		"film": film,
+		"paging": paging,
+	})
 
 }
 
@@ -64,18 +79,21 @@ func FilmHandlerCreate(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	// validate := validator.New()
-	// errValidate := validate.Struct(film)
-	// if errValidate != nil {
-	// 	return ctx.Status(400).JSON(fiber.Map{
-	// 		"message": "failed",
-	// 		"error": errValidate.Error(),
-	// 	})
-	// }
+	file, errFile := ctx.FormFile("thumbnail")
+	if errFile != nil {
+		log.Println("Error File = ", errFile)
+	}
 
+
+	filename := file.Filename
+	errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/asset/%s", filename))
+	if errSaveFile != nil{
+		log.Println("Fail to store file into public/thumbnails directory.")
+	}
 
 	newFilm := entity.Film{
 		Judul: film.Judul,
+		Thumbnail: filename,
         JenisFilm: film.JenisFilm,
         Produser: film.Produser,
 		Sutradara: film.Sutradara,
@@ -183,4 +201,5 @@ func FilmHandlerDelete(ctx *fiber.Ctx) error {
 		"message": "film was deleted",
 	})
 }
+
 
