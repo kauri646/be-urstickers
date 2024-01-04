@@ -6,7 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kauri646/go-restapi-fiber/database"
-	"github.com/kauri646/go-restapi-fiber/model/entity"
+	"github.com/kauri646/go-restapi-fiber/internal/models/users/entity"
 	"github.com/kauri646/go-restapi-fiber/request"
 	"github.com/kauri646/go-restapi-fiber/utils"
 )
@@ -15,23 +15,22 @@ func FilmHandlerGetAll(ctx *fiber.Ctx) error {
 	fmt.Println("ASDFGH")
 	var film []entity.Film
 	sql := "SELECT * FROM films"
-    paging := utils.PaginationResponse{}
+	paging := utils.PaginationResponse{}
 	// if sort := ctx.Query("sort"); sort != "" {
 	// 	sql = fmt.Sprintf("%s ORDER BY judul %s", sql, sort)
 	// }
-    	
-	
+
 	// page,_ := strconv.Atoi(ctx.Query("page", "1"))
 	// 	perPage := 9
-	// 	var total int64 
-		
+	// 	var total int64
+
 	// 	database.DB.Raw(sql).Count(&total)
-	
+
 	// 	sql = fmt.Sprintf("%s LIMIT %d OFFSET %d", sql, perPage, (page - 1) * perPage)
 	database.DB.Raw(sql).Scan(&film)
-	
+
 	return ctx.JSON(fiber.Map{
-		"film": film,
+		"film":   film,
 		"paging": paging,
 	})
 
@@ -48,7 +47,7 @@ func FilmHandlerGetByTheaterId(ctx *fiber.Ctx) error {
 		WHERE l.theater_id = ?
 	`, theaterid).Scan(&film)
 
-	if err.Error != nil{
+	if err.Error != nil {
 		log.Println(err.Error)
 	}
 	return ctx.JSON(film)
@@ -56,21 +55,20 @@ func FilmHandlerGetByTheaterId(ctx *fiber.Ctx) error {
 
 func FilmHandlerGetById(ctx *fiber.Ctx) error {
 	userId := ctx.Params("id")
-	
-    var film entity.Film
+
+	var film entity.Film
 	err := database.DB.First(&film, "id = ?", userId).Error
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "film not found",
 		})
 	}
-    
+
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": film,
+		"data":    film,
 	})
 }
-
 
 func FilmHandlerCreate(ctx *fiber.Ctx) error {
 	film := new(request.FilmCreateRequest)
@@ -84,29 +82,27 @@ func FilmHandlerCreate(ctx *fiber.Ctx) error {
 		log.Println("Error File = ", errFile)
 	}
 
-
 	filename := file.Filename
 	errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/asset/%s", filename))
-	if errSaveFile != nil{
+	if errSaveFile != nil {
 		log.Println("Fail to store file into public/thumbnails directory.")
 	}
 
 	newFilm := entity.Film{
-		Judul: film.Judul,
+		Judul:     film.Judul,
 		Thumbnail: filename,
-        JenisFilm: film.JenisFilm,
-        Produser: film.Produser,
+		JenisFilm: film.JenisFilm,
+		Produser:  film.Produser,
 		Sutradara: film.Sutradara,
-		Penulis: film.Penulis,
-		Produksi: film.Produksi,
-		Casts: film.Casts,
-		Sinopsis: film.Sinopsis,
-		Like: film.Like,
-		
+		Penulis:   film.Penulis,
+		Produksi:  film.Produksi,
+		Casts:     film.Casts,
+		Sinopsis:  film.Sinopsis,
+		Like:      film.Like,
 	}
-		
+
 	errCreateFilm := database.DB.Create(&newFilm).Error
-	if errCreateFilm != nil{
+	if errCreateFilm != nil {
 		return ctx.Status(500).JSON(fiber.Map{
 			"message": "failed to store data",
 		})
@@ -114,12 +110,12 @@ func FilmHandlerCreate(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": newFilm,
+		"data":    newFilm,
 	})
 }
 
 func FilmHandlerUpdate(ctx *fiber.Ctx) error {
-	
+
 	filmRequest := new(request.FilmUpdateRequest)
 	if err := ctx.BodyParser(filmRequest); err != nil {
 		return ctx.Status(400).JSON(fiber.Map{
@@ -139,19 +135,19 @@ func FilmHandlerUpdate(ctx *fiber.Ctx) error {
 
 	// if filmRequest.Kota != "" {
 	// film.Kota = filmRequest.Kota
-	// } 
+	// }
 
 	/*
-	Judul     string `json:"judul" validate:"required"`
-	JenisFilm string `json:"jenisfilm" validate:"required"`
-	Produser  string `json:"produser" validate:"required"`
-	Sutradara string `json:"sutradara" validate:"required"`
-	Penulis   string `json:"penulis" validate:"required"`
-	Produksi  string `json:"produksi" validate:"required"`
-	Casts     string `json:"casts" validate:"required"`
-	Sinopsis  string `json:"sinopsis" validate:"required"`
-	Like      uint   `json:"like" validate:"required"`
-	Comment   string `json:"comment" validate:"required"`
+		Judul     string `json:"judul" validate:"required"`
+		JenisFilm string `json:"jenisfilm" validate:"required"`
+		Produser  string `json:"produser" validate:"required"`
+		Sutradara string `json:"sutradara" validate:"required"`
+		Penulis   string `json:"penulis" validate:"required"`
+		Produksi  string `json:"produksi" validate:"required"`
+		Casts     string `json:"casts" validate:"required"`
+		Sinopsis  string `json:"sinopsis" validate:"required"`
+		Like      uint   `json:"like" validate:"required"`
+		Comment   string `json:"comment" validate:"required"`
 	*/
 	film.Judul = filmRequest.Judul
 	film.JenisFilm = filmRequest.JenisFilm
@@ -162,44 +158,40 @@ func FilmHandlerUpdate(ctx *fiber.Ctx) error {
 	film.Casts = filmRequest.Casts
 	film.Sinopsis = filmRequest.Sinopsis
 	film.Like = filmRequest.Like
-	
+
 	errUpdate := database.DB.Save(&film).Error
-	if errUpdate!= nil {
-        return ctx.Status(500).JSON(fiber.Map{
+	if errUpdate != nil {
+		return ctx.Status(500).JSON(fiber.Map{
 			"message": "internal server error",
-			
-        })
-    }
+		})
+	}
 
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": film,
+		"data":    film,
 	})
 }
 
 func FilmHandlerDelete(ctx *fiber.Ctx) error {
-	
 
 	userId := ctx.Params("id")
 
-    var film entity.Film
+	var film entity.Film
 
 	err := database.DB.Debug().First(&film, "id = ?", userId).Error
-    if err!= nil {
-        return ctx.Status(404).JSON(fiber.Map{
-        	"message": "film not found",
-        })
-    }
+	if err != nil {
+		return ctx.Status(404).JSON(fiber.Map{
+			"message": "film not found",
+		})
+	}
 	errDelete := database.DB.Debug().Delete(&film).Error
 	if errDelete != nil {
 		return ctx.Status(500).JSON(fiber.Map{
-        	"message": "internal server error",
-        })
+			"message": "internal server error",
+		})
 	}
 
 	return ctx.JSON(fiber.Map{
 		"message": "film was deleted",
 	})
 }
-
-

@@ -6,7 +6,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kauri646/go-restapi-fiber/database"
-	"github.com/kauri646/go-restapi-fiber/model/entity"
+	"github.com/kauri646/go-restapi-fiber/internal/models/users/entity"
 	"github.com/kauri646/go-restapi-fiber/request"
 )
 
@@ -24,16 +24,16 @@ func TheaterHandlerGetAll(ctx *fiber.Ctx) error {
 
 func TheaterHandlerGetDetails(ctx *fiber.Ctx) error {
 	theaterid := ctx.QueryInt("theaterid")
-    var theater entity.Theater
+	var theater entity.Theater
 	err := database.DB.First(&theater, "id = ?", theaterid).Error
-	if err != nil{
+	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "theater not found",
 		})
 	}
 
 	var film []entity.TheaterId
-    err = database.DB.Raw(`
+	err = database.DB.Raw(`
 		SELECT f.id, f.judul, l.theater_id AS theater_id, f.jenis_film, f.produser, f.sutradara, f.penulis, f.produksi, f.casts, f.sinopsis, f.like
 		FROM films f
 		INNER JOIN lists l ON l.film_id = f.id
@@ -45,8 +45,8 @@ func TheaterHandlerGetDetails(ctx *fiber.Ctx) error {
 	theaterdetails.Theater = theater.Theater
 	theaterdetails.Phone = theater.Phone
 	theaterdetails.Film = film
-    
-    return ctx.JSON(fiber.Map{
+
+	return ctx.JSON(fiber.Map{
 		"theater": theater,
 		//"film": film,
 		"details": theaterdetails,
@@ -56,18 +56,18 @@ func TheaterHandlerGetDetails(ctx *fiber.Ctx) error {
 
 func TheaterHandlerGetById(ctx *fiber.Ctx) error {
 	userId := ctx.Params("kota")
-	
-    var theater entity.Theater
+
+	var theater entity.Theater
 	err := database.DB.First(&theater, "kota = ?", userId).Error
 	if err != nil {
 		return ctx.Status(404).JSON(fiber.Map{
 			"message": "theater not found",
 		})
 	}
-    
+
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": theater,
+		"data":    theater,
 	})
 }
 
@@ -83,21 +83,18 @@ func TheaterHandlerCreate(ctx *fiber.Ctx) error {
 	if errValidate != nil {
 		return ctx.Status(400).JSON(fiber.Map{
 			"message": "failed",
-			"error": errValidate.Error(),
+			"error":   errValidate.Error(),
 		})
 	}
 
-
 	newTheater := entity.Theater{
-		Kota: theater.Kota,
-        Theater: theater.Theater,
-        Phone: theater.Phone,
-		
+		Kota:    theater.Kota,
+		Theater: theater.Theater,
+		Phone:   theater.Phone,
 	}
 
-		
 	errCreateTheater := database.DB.Create(&newTheater).Error
-	if errCreateTheater != nil{
+	if errCreateTheater != nil {
 		return ctx.Status(500).JSON(fiber.Map{
 			"message": "failed to store data",
 		})
@@ -105,7 +102,7 @@ func TheaterHandlerCreate(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": newTheater,
+		"data":    newTheater,
 	})
 }
 
@@ -121,19 +118,17 @@ func TheaterHandlerCreateList(ctx *fiber.Ctx) error {
 	if errValidate != nil {
 		return ctx.Status(400).JSON(fiber.Map{
 			"message": "failed",
-			"error": errValidate.Error(),
+			"error":   errValidate.Error(),
 		})
 	}
 
-
 	newList := entity.List{
 		TheaterId: list.TheaterId,
-        FilmId: list.FilmId,
+		FilmId:    list.FilmId,
 	}
 
-		
 	errCreateTheater := database.DB.Create(&newList).Error
-	if errCreateTheater != nil{
+	if errCreateTheater != nil {
 		return ctx.Status(500).JSON(fiber.Map{
 			"message": "failed to store data",
 		})
@@ -141,12 +136,12 @@ func TheaterHandlerCreateList(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": newList,
+		"data":    newList,
 	})
 }
 
 func TheaterHandlerUpdate(ctx *fiber.Ctx) error {
-	
+
 	theaterRequest := new(request.TheaterUpdateRequest)
 	if err := ctx.BodyParser(theaterRequest); err != nil {
 		return ctx.Status(400).JSON(fiber.Map{
@@ -166,48 +161,45 @@ func TheaterHandlerUpdate(ctx *fiber.Ctx) error {
 
 	// if theaterRequest.Kota != "" {
 	// theater.Kota = theaterRequest.Kota
-	// } 
+	// }
 
 	theater.Kota = theaterRequest.Kota
 	theater.Theater = theaterRequest.Theater
 	theater.Phone = theaterRequest.Phone
 
 	errUpdate := database.DB.Save(&theater).Error
-	if errUpdate!= nil {
-        return ctx.Status(500).JSON(fiber.Map{
+	if errUpdate != nil {
+		return ctx.Status(500).JSON(fiber.Map{
 			"message": "internal server error",
-			
-        })
-    }
+		})
+	}
 
 	return ctx.JSON(fiber.Map{
 		"message": "success",
-		"data": theater,
+		"data":    theater,
 	})
 }
 
 func TheaterHandlerDelete(ctx *fiber.Ctx) error {
-	
 
 	userId := ctx.Params("kota")
 
-    var theater entity.Theater
+	var theater entity.Theater
 
 	err := database.DB.Debug().First(&theater, "kota = ?", userId).Error
-    if err!= nil {
-        return ctx.Status(404).JSON(fiber.Map{
-        	"message": "theater not found",
-        })
-    }
+	if err != nil {
+		return ctx.Status(404).JSON(fiber.Map{
+			"message": "theater not found",
+		})
+	}
 	errDelete := database.DB.Debug().Delete(&theater).Error
 	if errDelete != nil {
 		return ctx.Status(500).JSON(fiber.Map{
-        	"message": "internal server error",
-        })
+			"message": "internal server error",
+		})
 	}
 
 	return ctx.JSON(fiber.Map{
 		"message": "theater was deleted",
 	})
 }
-	

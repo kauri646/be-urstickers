@@ -4,7 +4,7 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kauri646/go-restapi-fiber/database"
-	"github.com/kauri646/go-restapi-fiber/model/entity"
+	"github.com/kauri646/go-restapi-fiber/internal/models/users/entity"
 	"github.com/kauri646/go-restapi-fiber/request"
 )
 
@@ -25,7 +25,7 @@ func CommentHandlerCreate(ctx *fiber.Ctx) error {
 	}
 
 	newComment := entity.Comment{
-		FilmId: comment.FilmId,
+		FilmId:  comment.FilmId,
 		Comment: comment.Comment,
 	}
 

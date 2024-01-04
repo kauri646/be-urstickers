@@ -2,13 +2,14 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/kauri646/go-restapi-fiber/database"
+
 	//"github.com/kauri646/go-restapi-fiber/migration"
 	"github.com/kauri646/go-restapi-fiber/route"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-func main(){
+func main() {
 
 	database.DatabaseInit()
 	//migration.RunMigration()
@@ -17,8 +18,6 @@ func main(){
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
 	}))
-	
-	
 
 	route.RouteInit(app)
 

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/kauri646/go-restapi-fiber/database"
-	"github.com/kauri646/go-restapi-fiber/model/entity"
+	"github.com/kauri646/go-restapi-fiber/internal/models/users/entity"
 )
 
 func RunMigration() {
@@ -15,4 +15,3 @@ func RunMigration() {
 	}
 	fmt.Println("Database Migrated")
 }
-
